@@ -5,8 +5,8 @@ import ThemeRegistry from '@/components/themeregistry'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Task Tracker',
-  description: 'To maintain and track your tasks',
+  title: 'Weather',
+  description: "Know your place's weather",
 }
 
 export default function RootLayout({ children }) {

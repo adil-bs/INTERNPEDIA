@@ -68,7 +68,9 @@ export default function Home() {
     <div className='min-h-screen flex flex-col items-center justify-center bg-gradient-radial from-green-100 via-pink-100 to-red-100'>
     <TaskDataContext.Provider value={{dispatchTaskData,handleOpenManageTask}}>
       
-      <p className="text-5xl font-semibold text-transparent bg-gradient-to-br from-green-800 via-emerald-500 to-teal-200 p-4 bg-clip-text ">To Do</p>
+      <p className="text-5xl font-semibold text-transparent bg-gradient-to-br from-green-800 via-emerald-500 to-teal-200 p-4 bg-clip-text ">
+        Task Tracker
+      </p>
 
       <Button endIcon={<Add/>} onClick={() => handleOpenManageTask('add')}>Add new Task</Button>
 
