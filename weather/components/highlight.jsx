@@ -16,15 +16,12 @@ const mainWeatherHighlights = [
 ]
 
   
-export const Highlight = () => {
-  const {data:weatherData,date,setDate} = useContext(WeatherDataContext)
+export const Highlight = (props) => {
+  const {addOnData:{availableDates,location}} = props
+  const {todayDataWithMinMax,date,setDate} = useContext(WeatherDataContext)
   const [precisionType,setPrecisionType] = useState('Avg')
 
   const todayData = useMemo(()=>{
-
-    const todayDataWithMinMax = weatherData.timelines.daily
-      .find(ele => findDay(ele.time) === findDay(date)) 
-      // .find(ele => ele.time.startsWith(new Date().toISOString().split("T")[0])) 
     
     let todayData = {time: todayDataWithMinMax.time,values:{}}
         
@@ -37,10 +34,6 @@ export const Highlight = () => {
 
     return todayData
   },[precisionType,date])
-
-  const availableDates = useMemo(()=>{
-    return weatherData.timelines.daily.map(ele => new Date(ele.time).toDateString())
-  },[])
   
   const dateFormatter = (date) => new Date(date).toLocaleDateString('en-IN',{weekday:"short",day:"numeric",month:"short"})
   
@@ -49,12 +42,12 @@ export const Highlight = () => {
     <Card className='flex items-center flex-col p-5 md:w-5/6 md:self-center lg:max-w-4xl'>
       <ButtonBase>
         <p className='text-center text-lg rounded-lg backdrop-brightness-90 p-2'>
-          {weatherData.location.name}
+          {location.name}
         </p>  
         {/* <TextField 
           className='text-center text-lg rounded-lg backdrop-brightness-90 p-2' 
           select 
-          defaultValue={weatherData.location.name} 
+          defaultValue={location.name} 
           variant='filled'
         >
           <MenuItem value={weatherData.location.name}>{weatherData.location.name}</MenuItem>
@@ -81,9 +74,8 @@ export const Highlight = () => {
         <div className='relative h-40 sm:flex-1  max-sm:w-full max-sm:mr-36'>
           <Image 
             src={`/weatherIcons/${todayData.values.weatherCodeMax}@2x\.png`} 
+            style={{ objectPosition: '70% 0%',objectFit:"contain" }}
             fill 
-            objectFit='contain'
-            objectPosition='70% '
             alt={weatherCode[todayData.values.weatherCodeMax]}
           />
         </div>
@@ -104,7 +96,7 @@ export const Highlight = () => {
         <Tab value={'Min'} label='Minimum'/>
         <Tab value={'Max'} label='Maximum'/>
       </Tabs>
-      <Divider sx={{marginBottom:2,}} flexItem/>
+      <Divider sx={{marginBottom:2,}}/>
 
       <Grid container spacing={2}>
 

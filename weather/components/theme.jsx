@@ -12,6 +12,11 @@ export const theme = createTheme({
     divider:'gray',
   },
   components:{
+    MuiDivider:{
+      defaultProps:{
+        flexItem:true,
+      },
+    },
     MuiButton:{
       defaultProps:{
         variant:'contained',
@@ -58,7 +63,7 @@ export const theme = createTheme({
       styleOverrides:{
         paper:{
           backgroundColor:'lightblue',
-          height:300,
+          maxHeight:300,
           borderRadius:10,
         },
       }

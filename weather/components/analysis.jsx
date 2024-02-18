@@ -29,20 +29,20 @@ export function SelectParams(props) {
 }
 
 export default function  Analysis() {
-    const {data,date} = useContext(WeatherDataContext)
+    const {graphDataForToday} = useContext(WeatherDataContext)
     const [category, setCategory] = useState('params')
     const [param, setParam] = useState('temperature')
 
-    const {graphDataForToday} = useMemo(()=>{
-        const filteredData =  data.timelines.hourly.filter(ele => (
-            findDay(ele.time) === findDay(date)
-        ))
-        const graphDataForToday = filteredData.map(ele =>( {
-            time:new Date(ele.time).toLocaleString(undefined,{hour12:true,hour:"numeric"}),
-            ...ele.values
-        }))
-        return {graphDataForToday}
-    },[date])
+    // const {graphDataForToday} = useMemo(()=>{
+    //     const filteredData =  data.timelines.hourly.filter(ele => (
+    //         findDay(ele.time) === findDay(date)
+    //     ))
+    //     const graphDataForToday = filteredData.map(ele =>( {
+    //         time:new Date(ele.time).toLocaleString(undefined,{hour12:true,hour:"numeric"}),
+    //         ...ele.values
+    //     }))
+    //     return {graphDataForToday}
+    // },[date])
 
   return (
     <Card className=' flex mt-5 flex-col p-5 md:w-5/6 md:self-center lg:max-w-4xl'>
@@ -60,7 +60,7 @@ export default function  Analysis() {
             }/>
             <Tab value={'details'} label='Details'/>    
         </Tabs>    
-        <Divider sx={{marginBottom:2,}} flexItem/>
+        <Divider sx={{marginBottom:2,}}/>
 
         <div 
             role='tabpanel'
