@@ -29,9 +29,40 @@ export const theme = createTheme({
       styleOverrides:{
         root:{
           background:"linear-gradient(to top right, #90CAF9, #81D4FA, #B2EBF2)"
+        },
+      },
+    },
+    MuiTabs:{
+      styleOverrides:{
+        indicator:{
+          height:5,
+          borderTopRightRadius:100,
+          borderTopLeftRadius:100,
+        },
+        root:{
+          minHeight:0,
+        },
+      },
+    },
+    MuiTab:{
+      styleOverrides:{
+        root:{
+          padding:10,
+          minHeight:0,
+          textTransform:'none',
+          fontWeight:600,
         }
       }
-    }
+    },
+    MuiMenu:{
+      styleOverrides:{
+        paper:{
+          backgroundColor:'lightblue',
+          height:300,
+          borderRadius:10,
+        },
+      }
+    },
   },
   breakpoints:{
     values: {

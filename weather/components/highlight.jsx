@@ -1,8 +1,10 @@
 import { WeatherDataContext } from '@/app/page'
-import { ButtonBase, Card, Grid, MenuItem, Select, TextField } from '@mui/material'
+import { ButtonBase, Card, Divider, Grid, MenuItem, Select, Tab, Tabs, TextField } from '@mui/material'
 import Image from 'next/image'
 import React, { useContext, useMemo, useState } from 'react'
-import { weatherCode, weatherUnits } from './weatherInfo'
+import { findDay, weatherCode, weatherUnits } from './utility'
+
+export const exceptionKeys = ['weatherCodeMax','windDirectionAvg','moonriseTime','moonsetTime','sunriseTime','sunsetTime']
 
 const mainWeatherHighlights = [
   {param:'temperature',displayParam:'Temperature',},
@@ -12,20 +14,20 @@ const mainWeatherHighlights = [
   {param:'windSpeed',displayParam:'Wind Speed',},
   {param:'windGust',displayParam:'Wind Gust',},
 ]
+
   
 export const Highlight = () => {
-  const weatherData = useContext(WeatherDataContext)
+  const {data:weatherData,date,setDate} = useContext(WeatherDataContext)
   const [precisionType,setPrecisionType] = useState('Avg')
 
   const todayData = useMemo(()=>{
 
     const todayDataWithMinMax = weatherData.timelines.daily
-      .find(ele => ele.time.startsWith(new Date().toISOString().split("T")[0])) 
+      .find(ele => findDay(ele.time) === findDay(date)) 
+      // .find(ele => ele.time.startsWith(new Date().toISOString().split("T")[0])) 
     
     let todayData = {time: todayDataWithMinMax.time,values:{}}
-    
-    const exceptionKeys = ['weatherCodeMax','windDirectionAvg','moonriseTime','moonsetTime','sunriseTime','sunsetTime']
-    
+        
     Object.keys(todayDataWithMinMax.values).forEach(ele =>{ 
       if (ele.endsWith(precisionType) || exceptionKeys.includes(ele) ){
         const newKey = exceptionKeys.includes(ele) ? ele :ele.replace(precisionType,'')
@@ -34,9 +36,15 @@ export const Highlight = () => {
     })
 
     return todayData
-  },[precisionType])
+  },[precisionType,date])
 
-  // console.log(todayData);
+  const availableDates = useMemo(()=>{
+    return weatherData.timelines.daily.map(ele => new Date(ele.time).toDateString())
+  },[])
+  
+  const dateFormatter = (date) => new Date(date).toLocaleDateString('en-IN',{weekday:"short",day:"numeric",month:"short"})
+  
+
   return (
     <Card className='flex items-center flex-col p-5 md:w-5/6 md:self-center lg:max-w-4xl'>
       <ButtonBase>
@@ -53,11 +61,23 @@ export const Highlight = () => {
         </TextField> */}
       </ButtonBase>
 
-      <p className=' my-5 text-2xl font-semibold'>
-        {new Date(todayData.time).toLocaleDateString('en-IN',{weekday:"short",day:"numeric",month:"short",year:"numeric"})}
-      </p>
+      <div className='my-2 '>
+        <Select
+          value={date} 
+          onChange={(e)=>setDate(e.target.value)}
+          variant='standard'
+          disableUnderline
+          MenuProps={{disableAutoFocusItem:true}}
+          sx={[
+            {'& .MuiSelect-select':{fontWeight:600,marginTop:1,fontSize:22,padding:1}},
+          ]}
+        >
+          {availableDates.map(ele => <MenuItem key={ele} value={ele}>{dateFormatter(ele)}</MenuItem>)}
+        </Select>
+      </div>
+      
 
-      <div className='flex items-center self-stretch  mb-10 max-sm:flex-col'>
+      <div className='flex items-center self-stretch mb-6 max-sm:flex-col max-sm:gap-5'>
         <div className='relative h-40 sm:flex-1  max-sm:w-full max-sm:mr-36'>
           <Image 
             src={`/weatherIcons/${todayData.values.weatherCodeMax}@2x\.png`} 
@@ -74,10 +94,23 @@ export const Highlight = () => {
         </div>  
       </div>
 
+
+      <Tabs 
+        className='self-start'
+        value={precisionType} 
+        onChange={(_,newVal) => setPrecisionType(newVal)}
+      >
+        <Tab value={'Avg'} label='Average'/>
+        <Tab value={'Min'} label='Minimum'/>
+        <Tab value={'Max'} label='Maximum'/>
+      </Tabs>
+      <Divider sx={{marginBottom:2,}} flexItem/>
+
       <Grid container spacing={2}>
 
         {mainWeatherHighlights.map(ele =>( 
           <SubHighlight 
+            key={ele.param}
             value={todayData.values[ele.param]} 
             param={ele.param}
             displayParam={ele.displayParam}
@@ -95,8 +128,8 @@ export function SubHighlight(props) {
   return(
     <Grid item xs={4} >
     <div className={'border-[3px] border-sky-600 p-3 rounded-lg backdrop-brightness-95 '}>
-      <p className=' font-semibold text-2xl'>{value} {weatherUnits[param].unit}</p>
-      <p>{displayParam}</p>
+      <p className=' font-semibold sm:text-2xl text-lg'>{value} {weatherUnits[param]}</p>
+      <p className='text-nowrap max-sm:text-sm'>{displayParam}</p>
     </div>    
     </Grid>
   )

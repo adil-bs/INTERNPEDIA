@@ -2,3 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+.customscroll::-webkit-scrollbar {
+    height: 7px;
+}
+  
+.customscroll::-webkit-scrollbar-track {
+    background-color: transparent; 
+    border-radius: 8px; 
+}
+  
+.customscroll::-webkit-scrollbar-thumb {
+    background-color: gray; 
+    border-radius: 10px; 
+}
+  
+.customscroll::-webkit-scrollbar-thumb:hover {
+    background-color: #481d51; /* Adjust hover color */
+}
+
+
+.MuiMenu-paper::-webkit-scrollbar {
+    width: 5px; 
+}
+  
+.MuiMenu-paper::-webkit-scrollbar-track {
+    background-color: transparent; 
+    border-radius: 8px; 
+}
+  
+.MuiMenu-paper::-webkit-scrollbar-thumb {
+    background-color: gray; 
+    border-radius: 10px; 
+}
+  
+.MuiMenu-paper::-webkit-scrollbar-thumb:hover {
+    background-color: #481d51; /* Adjust hover color */
+}
