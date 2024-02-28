@@ -1,11 +1,10 @@
 import { WeatherDataContext } from '@/app/page';
-import { Card, Divider, IconButton, MenuItem, Select, Tab, Tabs, TextField } from '@mui/material'
-import React, { useContext, useMemo, useState } from 'react'
+import { Card, Divider, IconButton, MenuItem, Select, Tab, Tabs, } from '@mui/material'
+import React, { useContext, useState } from 'react'
 import CustomLineChart from './customLineChart';
-import { camelToCapital, capitalize, findDay, weatherUnits } from './utility';
-import { exceptionKeys } from './highlight';
+import { camelToCapital, weatherUnits } from './utility';
 import Details from './details';
-import { ArrowDropDown, Download } from '@mui/icons-material';
+import { ArrowDropDown, } from '@mui/icons-material';
 
 export function SelectParams(props) {
     const {value, onChange, paramsList} = props
@@ -32,17 +31,6 @@ export default function  Analysis() {
     const {graphDataForToday} = useContext(WeatherDataContext)
     const [category, setCategory] = useState('params')
     const [param, setParam] = useState('temperature')
-
-    // const {graphDataForToday} = useMemo(()=>{
-    //     const filteredData =  data.timelines.hourly.filter(ele => (
-    //         findDay(ele.time) === findDay(date)
-    //     ))
-    //     const graphDataForToday = filteredData.map(ele =>( {
-    //         time:new Date(ele.time).toLocaleString(undefined,{hour12:true,hour:"numeric"}),
-    //         ...ele.values
-    //     }))
-    //     return {graphDataForToday}
-    // },[date])
 
   return (
     <Card className=' flex mt-5 flex-col p-5 md:w-5/6 md:self-center lg:max-w-4xl'>

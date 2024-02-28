@@ -2,7 +2,8 @@ import { WeatherDataContext } from '@/app/page'
 import { ButtonBase, Card, Divider, Grid, MenuItem, Select, Tab, Tabs, TextField } from '@mui/material'
 import Image from 'next/image'
 import React, { useContext, useMemo, useState } from 'react'
-import { findDay, weatherCode, weatherUnits } from './utility'
+import { weatherCode, weatherUnits } from './utility'
+import { Edit } from '@mui/icons-material'
 
 export const exceptionKeys = ['weatherCodeMax','windDirectionAvg','moonriseTime','moonsetTime','sunriseTime','sunsetTime']
 
@@ -41,17 +42,13 @@ export const Highlight = (props) => {
   return (
     <Card className='flex items-center flex-col p-5 md:w-5/6 md:self-center lg:max-w-4xl'>
       <ButtonBase>
-        <p className='text-center text-lg rounded-lg backdrop-brightness-90 p-2'>
+        <p className='flex items-center gap-2 text-center text-lg rounded-lg backdrop-brightness-90 p-2'>
           {location.name}
         </p>  
         {/* <TextField 
-          className='text-center text-lg rounded-lg backdrop-brightness-90 p-2' 
-          select 
           defaultValue={location.name} 
           variant='filled'
-        >
-          <MenuItem value={weatherData.location.name}>{weatherData.location.name}</MenuItem>
-        </TextField> */}
+        /> */}
       </ButtonBase>
 
       <div className='my-2 '>
@@ -76,7 +73,9 @@ export const Highlight = (props) => {
             src={`/weatherIcons/${todayData.values.weatherCodeMax}@2x\.png`} 
             style={{ objectPosition: '70% 0%',objectFit:"contain" }}
             fill 
+            sizes="50vw"
             alt={weatherCode[todayData.values.weatherCodeMax]}
+            priority
           />
         </div>
         <div className='flex-1'>

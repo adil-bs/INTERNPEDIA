@@ -1,6 +1,6 @@
 export async function GET(req) {
   try {
-    const location = req.nextUrl.searchParams.get('location') || 'kochi'
+    const location = req.nextUrl.searchParams.get('location') 
     const url = `https://api.tomorrow.io/v4/weather/forecast?location=${location}&timesteps=1h&timesteps=1d&apikey=s3DRFJmnz26Z4TFroRPOW6ef8XzGJymt`;
     const options = {method: 'GET', headers: {accept: 'application/json'}};
 
