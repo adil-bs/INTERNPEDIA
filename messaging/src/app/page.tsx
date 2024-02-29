@@ -4,36 +4,41 @@ import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import DisplayMessages from "@/components/displayMessages";
 import { message } from "@/types/message";
-import { addMessage, getMessages } from "@/app/actions";
+import { addMessage, getMessages, getUser } from "@/app/actions";
 import { pusherClient } from "@/utils/socket";
-import { cookies } from "next/headers";
 
 export default function Home() {
   const endOfchatRef = useRef<HTMLDivElement>(null)
   const [userMessage, setUserMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [messages, setMessages] = useState<message[]>([])
+  const [uname, setUname] = useState<string>('')
+
+  const newMessageHandler = (newMsg: message) => {
+    setMessages(prev => [newMsg, ...prev])
+    if (endOfchatRef.current)
+      endOfchatRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+
   
-
   useEffect(() => {
+    
     pusherClient.subscribe('chat')
-    pusherClient.bind('new_chat', (newMsg: message) => {
-      setMessages(prev => [newMsg,...prev ])
-      if (endOfchatRef.current)
-        endOfchatRef.current.scrollIntoView({ behavior:'instant' });
-    })
+    pusherClient.bind('new_chat', newMessageHandler)
+    
+    const initializeMessagesAndUser = async () => {
+      setUname((await getUser()).uname!)
 
-    const initializeMessages = async () => {     
-      const rawMessages = await getMessages() 
+      const rawMessages = await getMessages()
       setMessages(rawMessages.reverse())
       if (endOfchatRef.current)
-        endOfchatRef.current.scrollIntoView({ behavior:'instant' });
+        endOfchatRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-    initializeMessages()
+    initializeMessagesAndUser()
 
     return () => {
       pusherClient.unsubscribe('chat')
-      pusherClient.unbind('new_chat', (newMsg: message) => setMessages(prev => prev?.concat(newMsg)))
+      pusherClient.unbind('new_chat', newMessageHandler)
     }
   }, [])
 
@@ -47,15 +52,15 @@ export default function Home() {
   }
 
   return (
-    messages &&
+    uname && 
     <div className="flex h-screen justify-center ">
       <div className="flex flex-col h-screen w-full p-2 sm:w-5/6 md:w-4/6 bg-slate-400">
         <div className=" self-start font-semibold text-2xl text-white w-full border-2 bg-gradient-to-br from-green-800 via-emerald-500 to-teal-200 ring-4 p-5 rounded-lg">
           GLOBAL CHAT
         </div>
 
-        <div className="flex-1 overflow-y-auto overflow-x-clip py-4 px-2">
-          <DisplayMessages messages={messages} user="adil" />
+        <div className="flex-1 overflow-y-auto overflow-x-clip py-4 px-2 customscroll">
+          <DisplayMessages messages={messages} uname={uname} />
           <div ref={endOfchatRef} />
         </div>
 

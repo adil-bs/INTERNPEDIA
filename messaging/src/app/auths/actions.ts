@@ -9,16 +9,15 @@ const emailPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export async function authenticate(
   data: FormData,
   authType: auth,
-  // addError: (errorArray: string[]) => void
 ) {
   
   const { email, uname, pass, confirmPass } = Object.fromEntries(data.entries()) 
   let errorList: string[] = []
-
+  
+  const user: null | undefined | authInputs = await db.get(`user:${email}`)
 
   if (authType === 'login') {
 
-    const user: null | undefined | authInputs = await db.get(`user:${email}`)
 
     if (!user) {
       return ["Email is incorrect"]
@@ -29,7 +28,7 @@ export async function authenticate(
   } else if (authType === 'signup') {
 
     //checking input errors
-    if (await db.sismember('users', email)) {
+    if (user) {
       errorList.push("Email exists !")
     }
     if (!emailPattern.test(email as string)) {
@@ -51,6 +50,7 @@ export async function authenticate(
 
 
   cookies().set('ChatApp_email',email as string)
+  cookies().set('ChatApp_uname',user?.uname || uname as string)
   redirect('/',RedirectType.replace)
 
 }

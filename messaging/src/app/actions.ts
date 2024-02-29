@@ -29,3 +29,11 @@ export const getMessages = async () : Promise<message[]> => {
   return messages
   
 } 
+
+
+export const getUser = async () => {
+  return {
+    email : cookies().get('ChatApp_email')?.value,
+    uname : cookies().get('ChatApp_uname')?.value,
+  }
+}
