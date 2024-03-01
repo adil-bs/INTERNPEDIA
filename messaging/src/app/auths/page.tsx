@@ -47,7 +47,6 @@ const Page: FC = () => {
     const authArray: auth[] = ['login', 'signup']
 
     const formAction = (formData: FormData) => {
-        setLoading(true)
         authenticate(formData, currentAuth)
             .then(errorArray => setErrMsgs(prev => {
 
@@ -92,6 +91,7 @@ const Page: FC = () => {
                 {authArray.map(authType =>
                     <form
                         role='tabpanel'
+                        onSubmit={() => setLoading(true)}
                         action={formAction}
                         className={`flex flex-col space-y-5 ${currentAuth !== authType ? 'hidden' : ''}`}
                         key={authType}

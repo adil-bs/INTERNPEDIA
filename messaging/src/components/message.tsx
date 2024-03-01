@@ -1,32 +1,33 @@
-import { message } from '@/types/message'
+import { Message } from '@/types/message'
 import { formatTime } from '@/utils/functions'
+import { Box, Color, colors } from '@mui/material'
 import React, { FC } from 'react'
 
-interface propstypes {
-  uname: string
-  msg: message
+interface MessagePropstypes {
+  userEmail: string
+  msg: Message
+  isNewMsgSeries: boolean
 }
 
-const Message: FC<propstypes> = ({ uname, msg }) => {
+const Message: FC<MessagePropstypes> = ({ userEmail, msg, isNewMsgSeries }) => {
+
   return (
     <div
-      className={`flex flex-col p-2 px-3 text-wrap w-max max-w-[80%] rounded-2xl 
-            ${uname === msg.uname
-          ? ' self-end bg-green-300 : first-of-type:rounded-br-none'
+      className={`flex flex-col pt-2 px-3 w-max max-w-[70%] text-wrap break-words rounded-lg 
+            ${userEmail === msg.email
+          ? ' bg-green-200 : first-of-type:rounded-br-none'
           : ' bg-gray-300 first-of-type:rounded-bl-none'}
             `}
     >
-      <div>
-        {}
-      </div>
-      <div className={`
-            ${uname === msg.uname ? 'ml-14' : 'mr-14'}`}
-      >
+      {isNewMsgSeries &&
+        <Box className={`text-sm -mt-1 mb-1 font-semibold text-zinc-500`} >
+          ~{msg.email === userEmail ? 'You' : msg.uname}
+        </Box>
+      }
+      <div className={``}>
         {msg.message}
       </div>
-      <div className={`flex h-min -mt-3 text-[0.7rem] bg-clip-text text-gray-600
-            ${uname === msg.uname ? 'self-start -ml-1' : 'self-end -mr-1'} `}
-      >
+      <div className={`flex mt-1 -mr-2 h-min text-[0.6rem] bg-clip-text text-gray-600 self-end `}>
         {formatTime(msg.timestamp)}
       </div>
 

@@ -1,18 +1,19 @@
 'use server'
 import { authInputs } from "@/types/auth";
-import { message } from "@/types/message";
+import { Message } from "@/types/message";
 import { db } from "@/utils/db";
 import { pusherServer } from "@/utils/socket";
 import { cookies } from "next/headers";
+import { RedirectType, redirect } from "next/navigation";
 
 export const addMessage =async (message : string) => {
   const timestamp = Date.now()
   const email  = cookies().get('ChatApp_email')?.value
   const {uname} = await db.get(`user:${email}`) as authInputs 
 
-  if (!uname) return
+  if (!uname || !email) return
 
-  const chatSet : message = {uname ,message,timestamp}
+  const chatSet : Message = {email, uname ,message,timestamp}
   
   pusherServer.trigger('chat','new_chat',chatSet)
 
@@ -23,11 +24,9 @@ export const addMessage =async (message : string) => {
 
 }
 
-export const getMessages = async () : Promise<message[]> => {
-  const messages = await db.zrange('chats', 0, -1) as message[]
-
-  return messages
-  
+export const getMessages = async () : Promise<Message[]> => {
+  const messages = await db.zrange('chats', 0, -1) as Message[]
+  return messages 
 } 
 
 
@@ -36,4 +35,10 @@ export const getUser = async () => {
     email : cookies().get('ChatApp_email')?.value,
     uname : cookies().get('ChatApp_uname')?.value,
   }
+}
+
+export const logout = async () => {
+  cookies().delete('ChatApp_email')
+  cookies().delete('ChatApp_uname')
+  // redirect('/auths',RedirectType.replace)
 }
