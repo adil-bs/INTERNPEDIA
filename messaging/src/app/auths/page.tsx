@@ -3,7 +3,7 @@ import { auth, authPageData } from '@/types/auth'
 import { Sync, Warning } from '@mui/icons-material'
 import { Button, Tab, Tabs, TextField, TextFieldProps } from '@mui/material'
 import React, { ChangeEvent, FC, useState } from 'react'
-import { authenticate } from '@/app/auths/actions'
+import { authenticate } from '../actions/auth'
 
 
 const Page: FC = () => {

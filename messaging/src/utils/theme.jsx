@@ -23,6 +23,16 @@ export const theme = createTheme({
         variant:'contained',
       }
     },
+    MuiIconButton:{
+      defaultProps:{
+        color:"inherit",
+      },
+    },
+    MuiIcon:{
+      defaultProps:{
+        color:"inherit",
+      },
+    },
     MuiDialog:{
       styleOverrides:{
         paper:{

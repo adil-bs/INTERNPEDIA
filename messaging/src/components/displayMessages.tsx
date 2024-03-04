@@ -4,7 +4,7 @@ import Message from './message'
 import { Avatar, colors } from '@mui/material'
 
 interface DisplayMessagesPropstypes {
-  messages: MessageType[]
+  messages: MessageType[] | undefined
   userEmail: string
 }
 
@@ -19,11 +19,10 @@ const DisplayMessages: FC<DisplayMessagesPropstypes> = ({ messages = [], userEma
             ${userEmail === msg.email && 'flex-row-reverse'} ${isNewMsgSeries && 'mt-3'}
           `}>
             <Avatar
-              src="/imagesource.jpg" //non-existent
               alt={msg.uname.toUpperCase()}
               className={`${!isNewMsgSeries && 'invisible'}`}
               sx={{ bgcolor: colors.deepOrange[500], }}
-            />
+            >{msg.uname[0].toUpperCase()}</Avatar>
             <Message {...{ msg, userEmail, isNewMsgSeries }} />
           </div>
         )
