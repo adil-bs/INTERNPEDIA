@@ -1,5 +1,5 @@
 import { SidebarOption } from '@/types/sidebar'
-import { ExitToApp, Groups, PersonAddAlt1, Sync } from '@mui/icons-material'
+import { Close, ExitToApp, Groups, PersonAddAlt1, Sync } from '@mui/icons-material'
 import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Tooltip } from '@mui/material'
 import Link from 'next/link'
 import React, { FC, HTMLAttributes, useEffect, useState } from 'react'
@@ -34,11 +34,16 @@ export interface SideLineExclusiveProps {
   userData: UserDataContextType
   friends: Friend[]
 }
-interface SideLineBarProps extends HTMLAttributes<HTMLElement>, SideLineExclusiveProps {
+export interface SideLinePropsForMobile{
+  handleClose?: ()=>void
+}
+interface SideLineBarProps extends 
+  HTMLAttributes<HTMLElement>, SideLineExclusiveProps, SideLinePropsForMobile {
 
 }
 
-const SideLineBar: FC<SideLineBarProps> = ({ userData, friends, className, ...other }) => {
+const SideLineBar: FC<SideLineBarProps> = (props) => {
+  const { userData, friends, className, handleClose, ...other } = props
   const router = useRouter()
 
   const handleLogout = async () => {
@@ -47,7 +52,11 @@ const SideLineBar: FC<SideLineBarProps> = ({ userData, friends, className, ...ot
   }
   return (
 
-    <nav className={' h-screen max-h-screen flex flex-col pt-10 pb-4 gap-y-5 border-r border-gray-200 px-6' + className}>
+    <nav className={' h-screen max-h-screen flex flex-col pt-10 pb-4 border-r border-gray-200 px-6' + className}>
+
+      <div className=' md:hidden inline-flex flex-none self-end overflow-clip -mb-8 border-green-300 text-green-600 border rounded-full hover:ring-1 hover:bg-green-50 '>
+        <IconButton onClick={handleClose}><Close/></IconButton>
+      </div>
       <ul role='list' className='flex flex-col gap-y-7 h-full'>
 
         <li >

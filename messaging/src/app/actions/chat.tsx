@@ -6,6 +6,7 @@ import { Message } from "@/types/message";
 import { db } from "@/utils/db";
 import { pusherServer } from "@/utils/socket";
 import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
 
 export const addMessage = async (message: string, toFriendMail: string) => {
   const timestamp = Date.now()
@@ -24,7 +25,7 @@ export const addMessage = async (message: string, toFriendMail: string) => {
         member: JSON.stringify(chatSet),
       }),
     ])
-  } else {
+  } else {    
     await Promise.all([
       pusherServer.trigger(
         [`chat_${email}-${toFriendMail}`,`chat_${toFriendMail}-${email}`], 
@@ -57,7 +58,8 @@ export const getMessages = async (chatpartner: string)
     const friendDetail: Friend | undefined = ((await db.smembers('friends:' + userEmail)) as Friend[])
       .find((friend) => friend.email === chatpartner)
     if (friendDetail === undefined)
-      throw '404'
+      // throw '404'
+      notFound()
 
     const messages = await db.zrange(`chat:${userEmail}-${chatpartner}`, 0, -1) as Message[]
 

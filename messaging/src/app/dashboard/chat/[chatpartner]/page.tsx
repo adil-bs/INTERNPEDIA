@@ -8,6 +8,7 @@ import { pusherClient } from "@/utils/socket";
 import { addMessage, getMessages } from "@/app/actions/chat";
 import { UserDataContext } from "@/components/context";
 import { Friend } from "@/types/friends";
+import { notFound, usePathname } from "next/navigation";
 
 interface ChatPageProps{
   params : {chatpartner : string}
@@ -19,14 +20,7 @@ export default function Page({params} : ChatPageProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [messages, setMessages] = useState<{messages:Message[],friend:Friend}>()
   const userData = useContext(UserDataContext)
-  
-  const initializeMessagesAndUser = async () => {
-    const rawMessageDatas = await getMessages(chatpartner)
-    setMessages({
-      messages:rawMessageDatas.messages.reverse(),
-      friend:rawMessageDatas.friend,
-    })
-  }
+  const pathname = usePathname()
 
   const newMessageHandler = (newMsg: Message) => {
     setMessages(prev => ({
@@ -37,17 +31,26 @@ export default function Page({params} : ChatPageProps) {
 
 
   useEffect(() => {
-
-    pusherClient.subscribe('chat_globalchat')
-    pusherClient.subscribe(`chat_${userData!.userEmail}-${chatpartner}`)
+    if (pathname === '/dashboard/chat/globalchat'){
+      pusherClient.subscribe('chat_globalchat')
+    }else {
+      pusherClient.subscribe(`chat_${userData!.userEmail}-${chatpartner}`)
+    }
     pusherClient.bind('new_chat', newMessageHandler)
 
-    initializeMessagesAndUser()
+    getMessages(chatpartner)
+      .then(({messages,friend}) => setMessages({
+        messages:messages.reverse(),
+        friend,
+      }))
 
     return () => {
       pusherClient.unbind('new_chat', newMessageHandler)
-      pusherClient.subscribe(`chat_${userData!.userEmail}-${chatpartner}`)
-      pusherClient.unsubscribe('chat_globalchat')
+      if (pathname === '/dashboard/chat/globalchat'){
+        pusherClient.unsubscribe('chat_globalchat')
+      }else {
+        pusherClient.unsubscribe(`chat_${userData!.userEmail}-${chatpartner}`)
+      }
   }
   }, [])
 

@@ -11,7 +11,7 @@ export  function middleware(req: NextRequest) {
 
   if (isInAuthPage) {
     if (user) {
-      return NextResponse.redirect(new URL('/dashboard', req.url))
+      return NextResponse.redirect(new URL('/dashboard/chat/globalchat', req.url))
     }
 
     return NextResponse.next()

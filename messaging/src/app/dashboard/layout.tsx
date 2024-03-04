@@ -6,6 +6,7 @@ import { UserDataContext, UserDataContextType } from "@/components/context";
 import { getUser } from "../actions/auth";
 import { getFriends } from "../actions/friend";
 import { pusherClient } from "@/utils/socket";
+import { Friend } from "@/types/friends";
 
 
 export default function RootLayout({
@@ -20,13 +21,16 @@ export default function RootLayout({
       .then(([userData, friends]) => setSideLineProps({ userData, friends }))
   }
 
-  const handlefriends = ({mail,info, status }: { status: 'accepted' | 'rejected' ,mail:any,info:any}) => {
-    if (status === 'accepted') {
-      console.log(sideLineProps?.userData.userEmail,' get again ',mail,info);
-      
-      getDataFromDb()
-    }
+  const handlefriends = ({friend,info}: { friend: Friend , info: 'addfriend' | 'removefriend'}) => {
+    
+    setSideLineProps(prev => ({
+      ...prev!,
+      friends : info === 'addfriend'
+        ? prev!.friends.concat(friend) 
+        : prev!.friends.filter(eachFriend => eachFriend.email!==friend.email)
+    }))
   }
+
 
   useEffect(() => {
     getDataFromDb()
@@ -35,12 +39,10 @@ export default function RootLayout({
     if (sideLineProps && sideLineProps.userData) {
       pusherClient.subscribe(sideLineProps.userData.userEmail!);
     }
-    pusherClient.bind('incoming_friend_request', handlefriends)
-    pusherClient.bind('outgoing_friend_request', handlefriends)
+    pusherClient.bind('friends_list', handlefriends)
 
     return () => {
-      pusherClient.unbind('outgoing_friend_request', handlefriends)
-      pusherClient.unbind('incoming_friend_request', handlefriends)
+      pusherClient.unbind('friends_list', handlefriends)
       if (sideLineProps && sideLineProps.userData) {
         pusherClient.unsubscribe(sideLineProps.userData.userEmail!);
       }
